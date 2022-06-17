@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using OOPIntroduction.Models;
+using System.Reflection;
 
 /*
 Console.WriteLine("Hello, World!");
@@ -38,17 +39,47 @@ Console.ReadLine();
 
 
 // Kalıtım
+// abstract sınıf ile başka nesneleri türetecek onlara örnek teşkil edecek klavuz bir sınıf oluşturuyoruz. Abstract sınıfların instance alınmıyor.
 
-Invoice i = new Invoice(unitPrice:3.2);
-i.FirstIndex = 100; // m3
-i.LastIndex = 125;
-Console.WriteLine($"Fatura Tutarı : {i.UsageCost.ToString()}");
+//Invoice i = new Invoice(unitPrice:3.2);
+//i.FirstIndex = 100; // m3
+//i.LastIndex = 125;
+//Console.WriteLine($"Fatura Tutarı : {i.UsageCost.ToString()}");
 
 
 ElectricInvoice e = new ElectricInvoice(unitPrice: 3.2,energyCost:2.3M);
-e.FirstIndex = 100; // m3
+e.FirstIndex = 100; // kwatt
 e.LastIndex = 125;
-Console.WriteLine($"Fatura Tutarı : {e.UsageCost.ToString()}");
+e.DueDate = DateTime.Now.AddDays(-1);
+
+Console.WriteLine($"Fatura Tipi: {e.InvoiceType} Ceza Tutarı: {e.DebitCost()}, Fatura Tutarı {e.UsageCost}");
+
+
+
+
+WaterInvoice w = new WaterInvoice(unitPrice: 2.1);
+w.FirstIndex = 100;
+w.LastIndex = 350;
+// 6/10/2022 Borcu ödemem lazım 7 gün borç vadesi var bundan dolayı cezaya girmemesi en geç 13/10/2022 ödememiş olmam lazım
+w.DueDate = DateTime.Now.AddDays(-10);
+var p =  w.DebitCost();
+
+Console.WriteLine($"Fatura Tipi: {e.InvoiceType} Ceza Tutarı: {p}, Fatura Tutarı {w.UsageCost}");
+
+
+/// <summary>
+/// Reflection konusu uygulama çalışma zamanında uygulamaya müdehale etmemizi sağlayan bir kodlama tekniği sağlar.
+/// </summary>
+var type = typeof(IEnvironmentalTax);
+var types = AppDomain.CurrentDomain.GetAssemblies()
+    .SelectMany(s => s.GetTypes())
+    .Where(p => type.IsAssignableFrom(p));
+
+
+
+//Invoice c = new WaterInvoice(unitPrice: 3.4F);
+
+
 
 Console.ReadLine();
 
